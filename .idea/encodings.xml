@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/hotelManagement/apigateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/base/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/discoveryserver/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/services/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/hotelManagement/userManagement/src/main/java" charset="UTF-8" />
+  </component>
+</project>

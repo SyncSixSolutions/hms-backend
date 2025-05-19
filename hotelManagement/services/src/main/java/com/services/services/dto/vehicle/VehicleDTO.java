@@ -1,23 +1,17 @@
-package com.services.services.model.vehicel;
+package com.services.services.dto.vehicle;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
-@Table(name = "vehicles")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class VehicleModel {
-    @Id
+public class VehicleDTO {
     private int vehicleId;
     private String vehicleNumber;
     private int passengerCount;

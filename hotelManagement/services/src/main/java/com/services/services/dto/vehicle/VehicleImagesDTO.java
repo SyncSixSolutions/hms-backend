@@ -1,20 +1,15 @@
-package com.services.services.model.vehicel;
+package com.services.services.dto.vehicle;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
-@Table(name = "vehicle_images")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class VehicleImages {
-    @Id
+public class VehicleImagesDTO {
     private int imageId;
     private int vehicleId;
     private String imageUrl;

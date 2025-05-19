@@ -1,21 +1,16 @@
-package com.services.services.model.vehicel;
+package com.services.services.dto.vehicle;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Entity
-@Table(name = "vehicle_availability")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class VehicleAvailability {
-    @Id
+public class VehicleAvailabilityDTO {
     private int slotId;
     private int vehicleId;
     private LocalDate availabilityFrom;

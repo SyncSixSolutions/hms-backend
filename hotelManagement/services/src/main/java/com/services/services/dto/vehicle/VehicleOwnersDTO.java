@@ -1,19 +1,13 @@
-package com.services.services.model.vehicel;
+package com.services.services.dto.vehicle;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
-@Entity
-@Table(name = "vehicle_owners")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class VehicleOwners {
-    @Id
+public class VehicleOwnersDTO {
     private int ownerId;
     private String name;
     private String contactNumber;

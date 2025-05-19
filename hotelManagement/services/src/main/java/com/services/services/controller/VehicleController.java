@@ -1,14 +1,21 @@
 package com.services.services.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.services.services.dto.vehicle.CreateVehicleDTO;
+import com.services.services.service.VehicleService;
+import org.springframework.web.bind.annotation.*;
 
-import static jdk.internal.foreign.abi.aarch64.AArch64Architecture.Regs.v1;
 
 @RestController
 @CrossOrigin
 @RequestMapping("api/v1/vehicle")
 public class VehicleController {
+
+    private VehicleService vehicleService;
+
+    @PostMapping("addVehicle")
+    public String addVehicle(@RequestBody CreateVehicleDTO createVehicleDTO) {
+        // Logic to save vehicle
+        return vehicleService.createVehicle(createVehicleDTO);
+    }
 
 }

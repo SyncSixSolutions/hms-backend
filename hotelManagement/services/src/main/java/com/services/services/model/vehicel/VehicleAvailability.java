@@ -16,7 +16,6 @@ import java.util.UUID;
 @Data
 public class VehicleAvailability {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID slotId;
     private int vehicleId;
     private LocalDate availabilityFrom;

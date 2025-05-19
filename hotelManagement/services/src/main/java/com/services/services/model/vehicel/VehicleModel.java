@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,13 +18,12 @@ import java.util.UUID;
 @Data
 public class VehicleModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID vehicleId;
     private String vehicleNumber;
     private int passengerCount;
     private String vehicleType;
-    private DecimalFormat pricePerKm;
-    private DecimalFormat basePrice;
+    private BigDecimal pricePerKm;
+    private BigDecimal basePrice;
     private LocalDate availabilityFrom;
     private LocalDate availabilityTo;
     private String description;

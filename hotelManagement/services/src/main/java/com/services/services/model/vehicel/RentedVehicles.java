@@ -13,10 +13,8 @@ import java.util.UUID;
 @Table(name = "rented_vehicles")
 @AllArgsConstructor
 @NoArgsConstructor
-@Id
 public class RentedVehicles {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID rentalId;
     private UUID userId;
     private UUID vehicleId;

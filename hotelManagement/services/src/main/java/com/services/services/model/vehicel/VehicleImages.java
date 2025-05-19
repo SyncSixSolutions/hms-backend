@@ -15,7 +15,6 @@ import java.util.UUID;
 @Data
 public class VehicleImages {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID imageId;
     private int vehicleId;
     private String imageUrl;

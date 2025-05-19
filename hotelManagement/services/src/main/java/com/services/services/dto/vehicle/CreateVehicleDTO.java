@@ -1,9 +1,7 @@
 package com.services.services.dto.vehicle;
 
-import com.services.services.model.vehicel.VehicleImages;
-import com.services.services.model.vehicel.VehicleOwners;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class CreateVehicleDTO {
         this.availability = availability;
     }
 
-    public List<VehicleImages> getImages() {
+    public List<VehicleImagesDTO> getImages() {
         return images;
     }
 
@@ -38,7 +36,7 @@ public class CreateVehicleDTO {
         this.images = images;
     }
 
-    public VehicleOwners getOwner() {
+    public VehicleOwnersDTO getOwner() {
         return owner;
     }
 

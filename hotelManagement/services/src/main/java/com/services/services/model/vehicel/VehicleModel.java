@@ -1,14 +1,14 @@
-package com.services.services.model;
+package com.services.services.model.vehicel;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vehicles")
@@ -17,7 +17,8 @@ import java.time.LocalDate;
 @Data
 public class VehicleModel {
     @Id
-    private int vehicleId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private UUID vehicleId;
     private String vehicleNumber;
     private int passengerCount;
     private String vehicleType;
@@ -25,7 +26,7 @@ public class VehicleModel {
     private DecimalFormat basePrice;
     private LocalDate availabilityFrom;
     private LocalDate availabilityTo;
-    private Srting description;
-    private LocalDate createdAt;
+    private String description;
+    private LocalDateTime createdAt;
     private int ownerId;
 }

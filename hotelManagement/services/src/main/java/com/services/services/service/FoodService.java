@@ -1,6 +1,6 @@
 package com.services.services.service;
 
-import com.services.services.dto.FoodDTO;
+import com.services.services.dto.FoodDTOs.FoodDTO;
 import com.services.services.model.FoodModel;
 import com.services.services.repo.FoodRepo;
 import org.modelmapper.ModelMapper;

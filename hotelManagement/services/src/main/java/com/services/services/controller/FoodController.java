@@ -1,6 +1,6 @@
 package com.services.services.controller;
 
-import com.services.services.dto.FoodDTO;
+import com.services.services.dto.FoodDTOs.FoodDTO;
 import com.services.services.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

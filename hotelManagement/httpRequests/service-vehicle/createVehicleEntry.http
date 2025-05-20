@@ -12,15 +12,13 @@ Content-Type: application/json
     "basePrice": "100.00",
     "availabilityFrom": "2025-04-01",
     "availabilityTo": "2025-04-30",
-    "description": "Well-maintained Toyota Corolla",
-    "createdAt": "2025-03-30T10:00:00"
+    "description": "Well-maintained Toyota Corolla"
   },
   "availability": {
     "slotId": 0,
     "vehicleId": 0,
     "availabilityFrom": "2025-04-01",
-    "availabilityTo": "2025-04-30",
-    "createdAt": "2025-03-30T10:00:00"
+    "availabilityTo": "2025-04-30"
   },
   "owner": {
     "ownerId": 0,

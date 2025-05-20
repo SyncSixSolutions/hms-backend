@@ -1,9 +1,7 @@
 package com.services.services.service;
 
 
-import com.services.services.dto.vehicle.CreateVehicleDTO;
-import com.services.services.dto.vehicle.VehicleAvailabilityDTO;
-import com.services.services.dto.vehicle.VehicleDTO;
+import com.services.services.dto.vehicle.*;
 import com.services.services.model.vehicel.VehicleAvailability;
 import com.services.services.model.vehicel.VehicleImages;
 import com.services.services.model.vehicel.VehicleModel;
@@ -112,5 +110,33 @@ public class VehicleService {
         availability.setCreatedAt(LocalDateTime.now());
         availabilityRepo.save(availability);
     }
+
+    public List<VehicleDTO> getAllVehicles() {
+        List<VehicleModel> vehicles = vehicleRepo.findAll();
+        return vehicles.stream()
+                .map(vehicle -> modelMapper.map(vehicle, VehicleDTO.class))
+                .toList();
+    }
+
+    public VehicleResponseDTO getVehicleById(int vehicleId) {
+        VehicleModel vehicle = vehicleRepo.findById(vehicleId)
+                .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + vehicleId));
+        // we have to add details for the vehicle like availability, images and owner
+        VehicleAvailability availability = availabilityRepo.findByVehicleId(vehicleId);
+        List<VehicleImages> images = imagesRepo.findByVehicleId(vehicleId);
+        VehicleOwners owner = ownersRepo.findByVehicleId(vehicleId);
+
+        VehicleResponseDTO responseDTO = new VehicleResponseDTO();
+
+        // mapping the vehicle to DTO
+        responseDTO.setVehicle(modelMapper.map(vehicle, VehicleDTO.class));
+        responseDTO.setAvailability(modelMapper.map(availability, VehicleAvailabilityDTO.class));
+        responseDTO.setImages(images.stream()
+                .map(image -> modelMapper.map(image, VehicleImagesDTO.class))
+                .toList());
+        responseDTO.setOwner(modelMapper.map(owner, VehicleOwnersDTO.class));
+        return responseDTO;
+    }
+
 
 }

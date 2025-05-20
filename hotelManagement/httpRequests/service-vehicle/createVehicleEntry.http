@@ -4,19 +4,19 @@ Content-Type: application/json
 
 {
   "vehicle": {
-    "vehicleId": 0,
-    "vehicleNumber": "ABC-1234",
+    "vehicleId": 1,
+    "vehicleNumber": "ABC-12346",
     "passengerCount": 5,
-    "vehicleType": "Sedan",
+    "vehicleType": "Sedanu",
     "pricePerKm": "15.50",
     "basePrice": "100.00",
     "availabilityFrom": "2025-04-01",
     "availabilityTo": "2025-04-30",
-    "description": "Well-maintained Toyota Corolla"
+    "description": "Well-maintained Toyota Corollaaa"
   },
   "availability": {
     "slotId": 0,
-    "vehicleId": 0,
+    "vehicleId": 1,
     "availabilityFrom": "2025-04-01",
     "availabilityTo": "2025-04-30"
   },
@@ -29,13 +29,13 @@ Content-Type: application/json
   "images": [
     {
       "imageId": 0,
-      "vehicleId": 0,
+      "vehicleId": 1,
       "imageUrl": "https://example.com/images/abc1234_1.jpg ",
       "uploadedAt": "2025-03-30T10:00:00"
     },
     {
       "imageId": 1,
-      "vehicleId": 0,
+      "vehicleId": 1,
       "imageUrl": "https://example.com/images/abc1234_2.jpg ",
       "uploadedAt": "2025-03-30T10:05:00"
     }

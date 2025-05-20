@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDTO {
+public class ReservationResponseDTO {
+    private int reservationId;
     private String userId;
     private String roomId;
     private String roomType;
@@ -23,5 +24,6 @@ public class ReservationDTO {
     private String paymentStatus;
     private BigDecimal totalAmount;
     private String bookingStatus;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
-

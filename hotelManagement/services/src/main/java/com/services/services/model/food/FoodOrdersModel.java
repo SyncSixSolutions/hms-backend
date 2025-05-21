@@ -14,13 +14,9 @@ public class FoodOrdersModel {
     private Integer orderId;
 
     private Integer userId;
-
     private LocalDateTime orderTime = LocalDateTime.now();
-
     private Integer roomId;
-
     private String notes;
-
     private Double totalPrice;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

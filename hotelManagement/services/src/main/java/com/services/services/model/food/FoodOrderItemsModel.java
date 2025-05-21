@@ -14,15 +14,10 @@ public class FoodOrderItemsModel {
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private FoodOrdersModel order;
-
     private Integer foodId;
-
     private Integer quantity;
-
     private Double price;
-
     private LocalDateTime deliveryTime;
-
     private Double totalPrice;
 
     @PrePersist

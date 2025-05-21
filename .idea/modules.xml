@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/java-spring-boot-microservices.iml" filepath="$PROJECT_DIR$/.idea/java-spring-boot-microservices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hotelManagement/services/services.iml" filepath="$PROJECT_DIR$/hotelManagement/services/services.iml" />
     </modules>
   </component>
 </project>

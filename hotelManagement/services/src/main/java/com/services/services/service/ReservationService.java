@@ -1,7 +1,7 @@
 package com.services.services.service;
 
 import com.services.services.dto.reservationDTO.ReservationDTO;
-import com.services.services.dto.reservationDTO.ReservationResponseDTO; // Add this import
+import com.services.services.dto.reservationDTO.ReservationResponseDTO;
 import com.services.services.model.ReservationModel;
 import com.services.services.repo.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
-import java.time.LocalDateTime; // Add this import
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors; // Add this import
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
@@ -128,6 +128,54 @@ public class ReservationService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Failed to retrieve bookings: " + e.getMessage()));
+        }
+    }
+
+    public ResponseEntity<Object> getBookingsByUserId(String userId, String bookingStatus) {
+        try {
+            List<ReservationModel> bookings;
+
+            // Validate status parameter if provided
+            if (bookingStatus != null && !bookingStatus.isEmpty()) {
+                if (!"PENDING".equalsIgnoreCase(bookingStatus) &&
+                        !"CONFIRMED".equalsIgnoreCase(bookingStatus)) {
+                    return ResponseEntity.badRequest()
+                            .body(Map.of("message", "Invalid status. Use 'PENDING' or 'CONFIRMED'"));
+                }
+                bookings = reservationRepo.findByUserIdAndBookingStatus(userId, bookingStatus.toUpperCase());
+            } else {
+                bookings = reservationRepo.findByUserId(userId);
+            }
+
+            if (bookings.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("message", "No bookings found for the given userId."));
+            }
+
+            List<ReservationResponseDTO> response = bookings.stream()
+                    .map(booking -> new ReservationResponseDTO(
+                            booking.getReservationId(),
+                            booking.getUserId(),
+                            booking.getRoomId(),
+                            booking.getRoomType(),
+                            booking.getCheckInDate().toLocalDate(),
+                            booking.getCheckOutDate().toLocalDate(),
+                            booking.getAdultsCount(),
+                            booking.getChildrenCount(),
+                            booking.getPaymentMethod(),
+                            booking.getPaymentStatus(),
+                            booking.getTotalAmount(),
+                            booking.getBookingStatus(),
+                            booking.getCreatedAt().toLocalDateTime(),
+                            booking.getUpdatedAt().toLocalDateTime()
+                    ))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to retrieve user bookings: " + e.getMessage()));
         }
     }
 }

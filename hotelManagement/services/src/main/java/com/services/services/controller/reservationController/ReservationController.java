@@ -35,4 +35,18 @@ public class ReservationController {
 
         return reservationService.getAllBookings(status);
     }
+
+    @GetMapping("/getBookings/{userId}")
+    public ResponseEntity<Object> getBookingsByUserId(
+            @PathVariable String userId,
+            @RequestParam(required = false) String status) {
+
+        // Validate userId
+        if (userId == null || userId.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Invalid request. Please provide a valid userId."));
+        }
+
+        return reservationService.getBookingsByUserId(userId, status);
+    }
 }

@@ -1,4 +1,7 @@
 package com.services.services.repo;
 
-public interface RoomBookingRepo {
+import com.services.services.model.reservation.RoomBookingModel;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface RoomBookingRepo extends JpaRepository<RoomBookingModel, Long> {
 }

@@ -1,4 +1,4 @@
-package com.services.services.model;
+package com.services.services.model.food;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

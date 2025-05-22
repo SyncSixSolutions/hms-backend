@@ -10,10 +10,19 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ReservationRepository extends JpaRepository<ReservationModel, Integer> {
-
+public interface ReservationRepo extends JpaRepository<ReservationModel, Integer> {
     @Query("SELECT r.roomId FROM ReservationModel r WHERE " +
-            "r.checkInDate <= :toDate AND r.checkOutDate >= :fromDate")
-    List<Integer> findReservedRoomIds(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
+            "(r.checkInDate < :toDate AND r.checkOutDate > :fromDate)")
+    List<Integer> findBookedRoomIds(@Param("fromDate") Date fromDate,
+                                    @Param("toDate") Date toDate);
+
+
+
+    @Query("SELECT r FROM ReservationModel r WHERE r.roomId = :roomId AND " +
+            "((:fromDate BETWEEN r.checkInDate AND r.checkOutDate) OR " +
+            "(:toDate BETWEEN r.checkInDate AND r.checkOutDate) OR " +
+            "(r.checkInDate BETWEEN :fromDate AND :toDate) OR " +
+            "(r.checkOutDate BETWEEN :fromDate AND :toDate))")
+    List<ReservationModel> findOverlappingReservations(int roomId, Date fromDate, Date toDate);
 }
 

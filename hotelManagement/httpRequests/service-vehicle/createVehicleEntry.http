@@ -1,0 +1,45 @@
+### GET request to example server
+POST localhost:14399/api/v1/vehicle/addVehicle
+Content-Type: application/json
+
+{
+  "vehicle": {
+    "vehicleId": 1,
+    "vehicleNumber": "ABC-12346",
+    "passengerCount": 5,
+    "vehicleType": "Sedanu",
+    "pricePerKm": "15.50",
+    "basePrice": "100.00",
+    "availabilityFrom": "2025-04-01",
+    "availabilityTo": "2025-04-30",
+    "description": "Well-maintained Toyota Corollaaa"
+  },
+  "availability": {
+    "slotId": 0,
+    "vehicleId": 1,
+    "availabilityFrom": "2025-04-01",
+    "availabilityTo": "2025-04-30"
+  },
+  "owner": {
+    "ownerId": 0,
+    "name": "John Doe",
+    "contactNumber": "+94771234567",
+    "nic": "941234567V"
+  },
+  "images": [
+    {
+      "imageId": 0,
+      "vehicleId": 1,
+      "imageUrl": "https://example.com/images/abc1234_1.jpg ",
+      "uploadedAt": "2025-03-30T10:00:00"
+    },
+    {
+      "imageId": 1,
+      "vehicleId": 1,
+      "imageUrl": "https://example.com/images/abc1234_2.jpg ",
+      "uploadedAt": "2025-03-30T10:05:00"
+    }
+  ]
+}
+
+###

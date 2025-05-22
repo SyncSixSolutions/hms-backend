@@ -1,6 +1,8 @@
 package com.services.services.controller;
 
-import com.services.services.dto.FoodDTO;
+import com.services.services.dto.FoodDTOs.AddFoodDTO;
+import com.services.services.dto.FoodDTOs.FoodDTO;
+import com.services.services.dto.FoodDTOs.UpdateFoodDTO;
 import com.services.services.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +53,27 @@ public class FoodController {
         }
         return ResponseEntity.ok(foods);
     }
+
+    @PostMapping("/addMeal")
+    public ResponseEntity<?> addMeal(@RequestBody AddFoodDTO addFoodDTO) {
+        FoodDTO savedFood = foodService.addMeal(addFoodDTO);
+        return ResponseEntity.ok(savedFood);
+    }
+
+    @PutMapping("/updateMeal/{id}")
+    public ResponseEntity<?> updateMeal(@PathVariable int id, @RequestBody UpdateFoodDTO updateFoodDTO) {
+        FoodDTO updatedFood = foodService.updateMeal(id, updateFoodDTO);
+        return ResponseEntity.ok(updatedFood);
+    }
+
+    @DeleteMapping("/deleteMeal/{id}")
+    public ResponseEntity<?> deleteMeal(@PathVariable int id) {
+        foodService.deleteMeal(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Food item deleted successfully");
+        return ResponseEntity.ok(response);
+    }
+
 
     private ResponseEntity<Map<String, String>> notFoundResponse(String message) {
         Map<String, String> response = new HashMap<>();

@@ -3,7 +3,7 @@ package com.services.services.service;
 import com.services.services.dto.FoodDTOs.AddFoodDTO;
 import com.services.services.dto.FoodDTOs.FoodDTO;
 import com.services.services.dto.FoodDTOs.UpdateFoodDTO;
-import com.services.services.model.FoodModel;
+import com.services.services.model.food.FoodModel;
 import com.services.services.repo.FoodRepo;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;

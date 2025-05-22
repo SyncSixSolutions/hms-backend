@@ -1,4 +1,4 @@
-package com.services.services.controller.reservationController;
+package com.services.services.controller;
 
 import com.services.services.dto.reservationDTO.RoomAvailabilityResponse;
 import com.services.services.dto.reservationDTO.RoomDTO;

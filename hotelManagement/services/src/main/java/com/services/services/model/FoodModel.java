@@ -2,9 +2,12 @@ package com.services.services.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -12,6 +15,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Table(name = "food")
 public class FoodModel { //this is the food model
     @Id
     private int foodNumber;
@@ -21,5 +25,7 @@ public class FoodModel { //this is the food model
     private BigDecimal price;
     private String description;
     private String foodPicture;
+
+    @CreationTimestamp
     private Timestamp createdAt;
 }

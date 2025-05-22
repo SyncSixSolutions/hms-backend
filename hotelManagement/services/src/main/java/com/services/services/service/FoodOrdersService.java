@@ -88,25 +88,6 @@ public class FoodOrdersService {
     }
 
     /**
-     * Get all food orders for a specific user
-     */
-    public List<FoodOrdersDTO> getFoodOrdersByUserId(Integer userId) {
-        List<FoodOrdersModel> orders = foodOrdersRepo.findByUserId(userId);
-        return orders.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Get a specific food order by ID
-     */
-    public FoodOrdersDTO getFoodOrderById(Integer orderId) {
-        FoodOrdersModel order = foodOrdersRepo.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + orderId));
-        return convertToDTO(order);
-    }
-
-    /**
      * Helper method to manually convert model to DTO
      */
     private FoodOrdersDTO convertToDTO(FoodOrdersModel order) {
@@ -136,4 +117,29 @@ public class FoodOrdersService {
 
         return dto;
     }
+
+    /**
+     * Get all food orders
+     * @return List of all food orders
+     */
+    public List<FoodOrdersDTO> getAllFoodOrders(){
+        List<FoodOrdersModel> orders = foodOrdersRepo.findAll();
+        return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+
+
+    /**
+     * Get all food orders for a specific user
+     */
+    public List<FoodOrdersDTO> getFoodOrdersByUserId(Integer userId) {
+        List<FoodOrdersModel> orders = foodOrdersRepo.findByUserId(userId);
+        return orders.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+
+
+
 }

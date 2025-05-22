@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Table(name = "reservation")
 public class ReservationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

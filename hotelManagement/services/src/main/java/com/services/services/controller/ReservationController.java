@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -62,14 +63,17 @@ public class ReservationController {
 
     @GetMapping("/getAvailableRoomsOnDate")
     public ResponseEntity<?> getAvailableRooms(
-            @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromDate,
-            @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate) {
+            @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
 
-        if (fromDate == null || toDate == null || fromDate.after(toDate)) {
+        if (fromDate == null || toDate == null || fromDate.isAfter(toDate)) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid request. Please provide a valid fromDate and toDate."));
         }
 
-        List<RoomDTO> availableRooms = reservationService.getAvailableRooms(fromDate, toDate);
+        Date sqlFromDate = Date.valueOf(fromDate);
+        Date sqlToDate = Date.valueOf(toDate);
+
+        List<RoomDTO> availableRooms = reservationService.getAvailableRooms(sqlFromDate, sqlToDate);
 
         boolean anyAvailable = availableRooms.stream().anyMatch(RoomDTO::isAvailability);
 
@@ -84,15 +88,19 @@ public class ReservationController {
     @GetMapping("/getAvailabilityOfARoom")
     public ResponseEntity<RoomAvailabilityResponse> checkRoomAvailability(
             @RequestParam int roomId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date fromDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date toDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
 
-        if (fromDate == null || toDate == null || roomId <= 0 || fromDate.after(toDate)) {
+        if (fromDate == null || toDate == null || roomId <= 0 || fromDate.isAfter(toDate)) {
             return ResponseEntity.badRequest().body(
                     new RoomAvailabilityResponse(false, "Invalid request. Please provide valid roomId, fromDate, and toDate."));
         }
 
-        RoomAvailabilityResponse response = reservationService.checkAvailability(roomId, fromDate, toDate);
+        // Convert to java.sql.Date if needed by the service
+        Date sqlFromDate = Date.valueOf(fromDate);
+        Date sqlToDate = Date.valueOf(toDate);
+
+        RoomAvailabilityResponse response = reservationService.checkAvailability(roomId, sqlFromDate, sqlToDate);
 
         if (response.isAvailable()) {
             return ResponseEntity.ok(response); // 200 OK
@@ -100,4 +108,5 @@ public class ReservationController {
             return ResponseEntity.status(404).body(response); // 404 Not Available
         }
     }
+
 }

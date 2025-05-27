@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VehicleModelRepo extends JpaRepository<VehicleModel, Integer> {
     public VehicleModel findByVehicleId(int vehicleId);
-    public VehicleModel findByVehicleTypeAndVehicleNumberAndOwnerId(String vehicleType, String vehicleNumber, int ownerId);
+    public VehicleModel findByVehicleTypeAndVehicleNumberAndOwnerId(String vehicleType, String vehicleNumber, Integer ownerId);
 }

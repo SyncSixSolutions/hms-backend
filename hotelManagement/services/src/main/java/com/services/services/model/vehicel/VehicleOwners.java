@@ -15,6 +15,7 @@ import java.util.UUID;
 public class VehicleOwners {
     @Id
     private int ownerId;
+    private int vehicleId;
     private String name;
     private String contactNumber;
     private String nic;

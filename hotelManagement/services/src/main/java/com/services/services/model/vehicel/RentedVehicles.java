@@ -2,6 +2,7 @@ package com.services.services.model.vehicel;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "rented_vehicles")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class RentedVehicles {
     @Id
     private int rentalId;

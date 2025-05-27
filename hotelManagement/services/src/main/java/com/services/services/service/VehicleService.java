@@ -1,17 +1,11 @@
 package com.services.services.service;
 
-
 import com.services.services.dto.vehicle.CreateVehicleDTO;
+import com.services.services.dto.vehicle.RentedVehiclesDTO;
 import com.services.services.dto.vehicle.VehicleAvailabilityDTO;
 import com.services.services.dto.vehicle.VehicleDTO;
-import com.services.services.model.vehicel.VehicleAvailability;
-import com.services.services.model.vehicel.VehicleImages;
-import com.services.services.model.vehicel.VehicleModel;
-import com.services.services.model.vehicel.VehicleOwners;
-import com.services.services.repo.vehicle.VehicleAvailabilityRepo;
-import com.services.services.repo.vehicle.VehicleImagesRepo;
-import com.services.services.repo.vehicle.VehicleModelRepo;
-import com.services.services.repo.vehicle.VehicleOwnersRepo;
+import com.services.services.model.vehicel.*;
+import com.services.services.repo.vehicle.*;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Transactional
@@ -41,6 +40,9 @@ public class VehicleService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private RentedVehiclesRepo rentedVehiclesRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public String createVehicle(CreateVehicleDTO createVehicleDTO) {
@@ -113,4 +115,54 @@ public class VehicleService {
         availabilityRepo.save(availability);
     }
 
+    public RentedVehiclesDTO rentVehicle(int userId, int vehicleId, LocalDate startDate, LocalDate endDate) {
+        // Validate dates
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        // Check vehicle existence
+        VehicleModel vehicleOpt = vehicleRepo.findByVehicleId(vehicleId);
+        if (vehicleOpt == null) {
+            throw new IllegalArgumentException("Vehicle not found.");
+        }
+//        VehicleModel vehicle = vehicleOpt.get();
+
+        // Check availability
+        List<RentedVehicles> conflicts = rentedVehiclesRepository
+                .findByVehicleIdAndDateRange(vehicleId, startDate, endDate);
+        if (!conflicts.isEmpty()) {
+            throw new IllegalStateException("Vehicle is not available in the selected date range.");
+        }
+
+        // Calculate price
+        long rentalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        BigDecimal totalPrice = vehicleOpt.getBasePrice().multiply(BigDecimal.valueOf(rentalDays));
+
+        // Create rental record
+        RentedVehicles rented = new RentedVehicles();
+        rented.setRentalId(ThreadLocalRandom.current().nextInt(100000, 999999)); // or use sequence
+        rented.setUserId(userId);
+        rented.setVehicleId(vehicleId);
+        rented.setStartDate(startDate);
+        rented.setEndDate(endDate);
+        rented.setPrice(totalPrice);
+        rented.setCreatedAt(LocalDateTime.now());
+
+        rentedVehiclesRepository.save(rented);
+
+        return new RentedVehiclesDTO(
+                rented.getRentalId(),
+                rented.getUserId(),
+                rented.getVehicleId(),
+                rented.getStartDate(),
+                rented.getEndDate(),
+                rented.getPrice(),
+                rented.getCreatedAt()
+        );
+
+
+
+
+}
 }

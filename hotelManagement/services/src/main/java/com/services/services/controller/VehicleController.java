@@ -1,9 +1,6 @@
 package com.services.services.controller;
 
-import com.services.services.dto.vehicle.CreateVehicleDTO;
-import com.services.services.dto.vehicle.RentedVehiclesDTO;
-import com.services.services.dto.vehicle.VehicleDTO;
-import com.services.services.dto.vehicle.VehicleResponseDTO;
+import com.services.services.dto.vehicle.*;
 import com.services.services.repo.vehicle.VehicleModelRepo;
 import com.services.services.service.VehicleService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +40,12 @@ public class VehicleController {
     public String rentVehicle(@RequestBody RentedVehiclesDTO rentedVehiclesDTO){
         log.info("Renting vehicle with ID: {}", rentedVehiclesDTO.getVehicleId());
         return vehicleService.rentVehicle(rentedVehiclesDTO.getUserId(), rentedVehiclesDTO.getVehicleId(), rentedVehiclesDTO.getStartDate(), rentedVehiclesDTO.getEndDate()).toString();
+    }
+
+    @PutMapping ("/updateVehicle")
+    public String updateVehicle(@RequestBody UpdateVehicleDTO updateVehicleDTO) {
+        // Logic to update vehicle
+        return vehicleService.updateVehicle(updateVehicleDTO);
     }
 
 }

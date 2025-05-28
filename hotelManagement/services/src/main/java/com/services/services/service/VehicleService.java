@@ -198,6 +198,25 @@ public class VehicleService {
                 rented.getPrice(),
                 rented.getCreatedAt()
         );
+    }
+
+        public String updateVehicle(UpdateVehicleDTO  updateVehicleDTO) {
+            VehicleModel existingVehicle = vehicleRepo.findByVehicleId(updateVehicleDTO.getVehicle().getVehicleId());
+
+            if (existingVehicle == null) {
+                throw new IllegalArgumentException("Vehicle not found with ID: " + updateVehicleDTO.getVehicle().getVehicleId());
+            }
+            else {
+                existingVehicle.setVehicleType(updateVehicleDTO.getVehicle().getVehicleType());
+                existingVehicle.setVehicleNumber(updateVehicleDTO.getVehicle().getVehicleNumber());
+                existingVehicle.setPassengerCount(updateVehicleDTO.getVehicle().getPassengerCount());
+                existingVehicle.setPricePerKm(updateVehicleDTO.getVehicle().getPricePerKm());
+                existingVehicle.setBasePrice(updateVehicleDTO.getVehicle().getBasePrice());
+                existingVehicle.setAvailabilityFrom(updateVehicleDTO.getVehicle().getAvailabilityFrom());
+                existingVehicle.setAvailabilityTo(updateVehicleDTO.getVehicle().getAvailabilityTo());
+                existingVehicle.setDescription(updateVehicleDTO.getVehicle().getDescription());
+            }
+            
 
 
 

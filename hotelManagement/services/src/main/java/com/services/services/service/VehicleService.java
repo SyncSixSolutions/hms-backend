@@ -65,14 +65,17 @@ public class VehicleService {
         // check if the vehicle already exists
         // if this becomes yes then we can edit the vehicle in different way
         // vehicle need to find by vehicleType, and vehicle number and owner info
-        VehicleModel existingVehicle = vehicleRepo.findByVehicleTypeAndVehicleNumberAndOwnerId(
-                vehicle.getVehicleType(),
-                vehicle.getVehicleNumber(),
-                vehicle.getOwnerId()
-        );
+        VehicleModel existingVehicle = vehicleRepo.findByVehicleNumber(vehicle.getVehicleNumber());
+
+//        existingVehicle = vehicleRepo.findByVehicleTypeAndVehicleNumberAndOwnerId(
+//                vehicle.getVehicleType(),
+//                vehicle.getVehicleNumber(),
+//                vehicle.getOwnerId()
+//        );
+
         if (existingVehicle != null) {
             log.info("Vehicle already exists. Try with edit vehicle");
-            throw new RuntimeException("Vehicle already exists with the given ID");
+            throw new RuntimeException("Vehicle already exists with the given Vehicle Number");
         }
 
         // preparing entities for save
@@ -86,9 +89,11 @@ public class VehicleService {
         // add the createdAt field dynamically for the vehicle
         vehicle.setCreatedAt(LocalDateTime.now());
         vehicle = vehicleRepo.save(vehicle);
+        // get the last inserter id for other table's usage
+//        Integer vehicleId = vehicle.getVehicleId();
 
         saveImages(vehicle, imageEntities);
-        saveOwner(vehicleOwners);
+        saveOwner(vehicle ,vehicleOwners);
         saveAvailability(vehicle, availabilityEntity);
 
         return "Vehicle created successfully";
@@ -101,7 +106,8 @@ public class VehicleService {
         }
     }
 
-    private void saveOwner(VehicleOwners owner) {
+    private void saveOwner(VehicleModel vehicle, VehicleOwners owner) {
+        owner.setVehicleId(vehicle.getVehicleId());
         ownersRepo.save(owner);
     }
 

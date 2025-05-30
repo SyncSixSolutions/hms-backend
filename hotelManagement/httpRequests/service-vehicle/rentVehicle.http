@@ -1,0 +1,14 @@
+### GET request to example server
+POST http://localhost:14399/api/v1/vehicle/rentVehicle
+content-Type: application/json
+
+{
+  "userId": 1,
+  "vehicleId": 1,
+  "startDate": "2025-06-01",
+  "endDate": "2025-06-05"
+}
+
+
+
+###

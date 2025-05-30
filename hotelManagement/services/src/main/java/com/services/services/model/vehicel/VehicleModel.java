@@ -30,4 +30,5 @@ public class VehicleModel {
     private String description;
     private LocalDateTime createdAt;
     private int ownerId;
+
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("api/v1/vehicle")
+@RequestMapping("api/v1/services/vehicle")
 public class VehicleController {
 
     @Autowired

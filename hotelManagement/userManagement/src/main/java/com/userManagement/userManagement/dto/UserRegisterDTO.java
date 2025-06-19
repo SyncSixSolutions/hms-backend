@@ -5,19 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+@AllArgsConstructor
+public class UserRegisterDTO {
     private int userId;
     private String email;
     private String passwordHash;
-    private String fullName;
+    private String firstName;
     private String lastName;
     private String phoneNumber;
     private String userRole;
-    private String isActive;
-    private String lastLogin;
-    private String createdAt;
-    private String updatedAt;
-    private String token;
 }

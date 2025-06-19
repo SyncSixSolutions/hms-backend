@@ -17,5 +17,6 @@ public class AddFoodDTO {
     private BigDecimal price;
     private String description;
     private String foodPicture;
+    private String foodType;
 
 }

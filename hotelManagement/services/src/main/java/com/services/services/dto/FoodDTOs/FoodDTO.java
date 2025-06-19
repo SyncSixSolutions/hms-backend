@@ -18,5 +18,6 @@ public class FoodDTO {
     private BigDecimal price;
     private String description;
     private String foodPicture;
+    private String foodType;
     private Timestamp createdAt;
 }

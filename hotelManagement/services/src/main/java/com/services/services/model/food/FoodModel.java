@@ -25,6 +25,7 @@ public class FoodModel { //this is the food model
     private BigDecimal price;
     private String description;
     private String foodPicture;
+    private String foodType;
 
     @CreationTimestamp
     private Timestamp createdAt;

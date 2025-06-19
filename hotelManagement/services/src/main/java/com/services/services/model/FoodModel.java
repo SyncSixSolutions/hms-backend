@@ -1,22 +1,25 @@
-package com.services.services.dto.FoodDTOs;
+package com.services.services.model;
 
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddFoodDTO {
+@Data
+public class FoodModel {
+    @Id
+    private int foodNumber;
     private String foodName;
     private String availableTimes;
     private String foodNature;
     private BigDecimal price;
     private String description;
     private String foodPicture;
-    private String foodType;
-
+    private Timestamp createdAt;
 }

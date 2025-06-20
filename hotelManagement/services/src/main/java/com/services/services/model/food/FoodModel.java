@@ -1,16 +1,23 @@
-package com.services.services.dto;
+package com.services.services.model.food;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoodDTO {
+@Data
+@Table(name = "food")
+public class FoodModel { //this is the food model
+    @Id
     private int foodNumber;
     private String foodName;
     private String availableTimes;
@@ -18,5 +25,8 @@ public class FoodDTO {
     private BigDecimal price;
     private String description;
     private String foodPicture;
+    private String foodType;
+
+    @CreationTimestamp
     private Timestamp createdAt;
 }

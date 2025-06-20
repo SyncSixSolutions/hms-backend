@@ -18,9 +18,10 @@ import java.util.UUID;
 @Data
 public class VehicleModel {
     @Id
-    private int vehicleId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer vehicleId;
     private String vehicleNumber;
-    private int passengerCount;
+    private Integer passengerCount;
     private String vehicleType;
     private BigDecimal pricePerKm;
     private BigDecimal basePrice;
@@ -29,4 +30,5 @@ public class VehicleModel {
     private String description;
     private LocalDateTime createdAt;
     private int ownerId;
+
 }

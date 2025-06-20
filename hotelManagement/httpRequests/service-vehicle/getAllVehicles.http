@@ -1,3 +1,5 @@
 ### GET request to example server
 
-GET localhost:14399/api/v1/vehicle/getVehicles
+#GET localhost:14399/api/v1/vehicle/getVehicles
+
+GET http://localhost:8765/api/v1/services/vehicle/getVehicles

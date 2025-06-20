@@ -54,6 +54,16 @@ public class VehicleService {
     @Autowired
     private RentedVehiclesRepo rentedVehiclesRepository;
 
+    // get all owners of the vehicle
+    public List<VehicleOwnersDTO> getAllOwners(){
+        List<VehicleOwners> owners = ownersRepo.findAll();
+
+        return owners.stream()
+                .map(owner -> modelMapper.map(owner, VehicleOwnersDTO.class))
+                .toList();
+
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public String createVehicle(CreateVehicleDTO createVehicleDTO) {
         // Validating the input data if anything is not initialized that will throw an error
@@ -107,7 +117,22 @@ public class VehicleService {
 //        Integer vehicleId = vehicle.getVehicleId();
 
         saveImages(vehicle, imageEntities);
-        saveOwner(vehicle ,vehicleOwners);
+
+        // Is there is the vehicle owner is registered then the entry should not repeat
+        VehicleOwners existingVehicleOwner = ownersRepo.findByNic(createVehicleDTO.getOwner().getNic());
+
+        if (existingVehicleOwner != null) {
+            // Check if names don't match
+            if (!createVehicleDTO.getOwner().getName().equalsIgnoreCase(existingVehicleOwner.getName())) {
+                throw new RuntimeException("NIC exists but name does not match. Please check for the nic and existing vehicle owners");
+            }
+            // Optionally allow reuse of same NIC + correct name
+            System.out.println("NIC and name match. Proceeding...");
+        } else {
+            // No existing NIC – proceed with registration
+            System.out.println("New NIC. Registering...");
+            saveOwner(vehicle ,vehicleOwners);
+        }
         saveAvailability(vehicle, availabilityEntity);
 
         return "Vehicle created successfully";
@@ -206,26 +231,22 @@ public class VehicleService {
         );
     }
 
-        public String updateVehicle(UpdateVehicleDTO  updateVehicleDTO) {
-            VehicleModel existingVehicle = vehicleRepo.findByVehicleId(updateVehicleDTO.getVehicle().getVehicleId());
-
-            if (existingVehicle == null) {
-                throw new IllegalArgumentException("Vehicle not found with ID: " + updateVehicleDTO.getVehicle().getVehicleId());
-            }
-            else {
-                existingVehicle.setVehicleType(updateVehicleDTO.getVehicle().getVehicleType());
-                existingVehicle.setVehicleNumber(updateVehicleDTO.getVehicle().getVehicleNumber());
-                existingVehicle.setPassengerCount(updateVehicleDTO.getVehicle().getPassengerCount());
-                existingVehicle.setPricePerKm(updateVehicleDTO.getVehicle().getPricePerKm());
-                existingVehicle.setBasePrice(updateVehicleDTO.getVehicle().getBasePrice());
-                existingVehicle.setAvailabilityFrom(updateVehicleDTO.getVehicle().getAvailabilityFrom());
-                existingVehicle.setAvailabilityTo(updateVehicleDTO.getVehicle().getAvailabilityTo());
-                existingVehicle.setDescription(updateVehicleDTO.getVehicle().getDescription());
-            }
-            
-
-
-
-
-}
+//        public String updateVehicle(UpdateVehicleDTO  updateVehicleDTO) {
+//            VehicleModel existingVehicle = vehicleRepo.findByVehicleId(updateVehicleDTO.getVehicle().getVehicleId());
+//
+//            if (existingVehicle == null) {
+//                throw new IllegalArgumentException("Vehicle not found with ID: " + updateVehicleDTO.getVehicle().getVehicleId());
+//            }
+//            else {
+//                existingVehicle.setVehicleType(updateVehicleDTO.getVehicle().getVehicleType());
+//                existingVehicle.setVehicleNumber(updateVehicleDTO.getVehicle().getVehicleNumber());
+//                existingVehicle.setPassengerCount(updateVehicleDTO.getVehicle().getPassengerCount());
+//                existingVehicle.setPricePerKm(updateVehicleDTO.getVehicle().getPricePerKm());
+//                existingVehicle.setBasePrice(updateVehicleDTO.getVehicle().getBasePrice());
+//                existingVehicle.setAvailabilityFrom(updateVehicleDTO.getVehicle().getAvailabilityFrom());
+//                existingVehicle.setAvailabilityTo(updateVehicleDTO.getVehicle().getAvailabilityTo());
+//                existingVehicle.setDescription(updateVehicleDTO.getVehicle().getDescription());
+//            }
+//
+//        }
 }

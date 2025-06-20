@@ -42,10 +42,15 @@ public class VehicleController {
         return vehicleService.rentVehicle(rentedVehiclesDTO.getUserId(), rentedVehiclesDTO.getVehicleId(), rentedVehiclesDTO.getStartDate(), rentedVehiclesDTO.getEndDate()).toString();
     }
 
-    @PutMapping ("/updateVehicle")
-    public String updateVehicle(@RequestBody UpdateVehicleDTO updateVehicleDTO) {
-        // Logic to update vehicle
-        return vehicleService.updateVehicle(updateVehicleDTO);
+//    @PutMapping ("/updateVehicle")
+//    public String updateVehicle(@RequestBody UpdateVehicleDTO updateVehicleDTO) {
+//        // Logic to update vehicle
+//        return vehicleService.updateVehicle(updateVehicleDTO);
+//    }
+
+    @GetMapping("/getOwners")
+    public List<VehicleOwnersDTO> getOwners(){
+        return vehicleService.getAllOwners();
     }
 
 }

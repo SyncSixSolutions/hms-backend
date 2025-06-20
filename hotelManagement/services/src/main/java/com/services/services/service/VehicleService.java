@@ -27,8 +27,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -249,4 +251,43 @@ public class VehicleService {
 //            }
 //
 //        }
+
+
+    public List<VehicleResponseDTO> getVehiclesByDateRange(LocalDate startDate, LocalDate endDate) {
+        // first get available vehicles on the date range
+        List<Integer> availableVehicles = availabilityRepo.findAvailableVehicleIdsBetweenDates(startDate, endDate);
+
+        if(availableVehicles.isEmpty()) {return Collections.emptyList();}
+
+        // find what are the rented vehicles in this time frame
+        List<Integer> rentedVehicleIds = rentedVehiclesRepository.findOverlappingRentals(availableVehicles, startDate, endDate);
+
+        // remove already rented vehicles from the list
+        List<Integer> trulyAvailableVehicleIds = availableVehicles.stream()
+                .filter(id -> !rentedVehicleIds.contains(id))
+                .toList();
+
+        List <VehicleResponseDTO> responseDTOs = new ArrayList<>();
+
+        for (Integer id : trulyAvailableVehicleIds) {
+            VehicleModel vehicle = vehicleRepo.findById(id).orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + id));
+            // remove this if want
+            VehicleAvailability availability = availabilityRepo.findByVehicleId(id);
+
+            List<VehicleImages> images = imagesRepo.findByVehicleId(id);
+            VehicleOwners owner = ownersRepo.findByVehicleId(id);
+
+            VehicleResponseDTO vehicleResponseDTO = new VehicleResponseDTO();
+            vehicleResponseDTO.setVehicle(modelMapper.map(vehicle, VehicleDTO.class));
+            vehicleResponseDTO.setAvailability(modelMapper.map(availability, VehicleAvailabilityDTO.class));
+            vehicleResponseDTO.setImages(images.stream()
+                    .map(img -> modelMapper.map(img, VehicleImagesDTO.class)).toList());
+            vehicleResponseDTO.setOwner(modelMapper.map(owner, VehicleOwnersDTO.class));
+
+            responseDTOs.add(vehicleResponseDTO);
+        }
+        return responseDTOs;
+    }
+
+
 }

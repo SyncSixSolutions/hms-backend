@@ -1,1 +1,1 @@
-GET http://localhost:8765/api/v1/services/vehicle/getVehiclesByDateRange?startDate=2025-06-01&endDate=2025-06-03
+GET http://localhost:8765/api/v1/services/vehicle/getVehiclesByDateRange?startDate=2025-06-02&endDate=2025-06-03

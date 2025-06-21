@@ -70,7 +70,7 @@ public class RoomService {
             throw new RuntimeException("You can upload up to 5 images only.");
         }
 
-        // ✅ Map DTO to Entity
+        // Map DTO to Entity
         RoomManagementModel room = new RoomManagementModel();
         room.setRoomNumber(dto.getRoomNumber());
         room.setRoomType(dto.getRoomType());
@@ -86,24 +86,69 @@ public class RoomService {
 
         RoomManagementModel saved = roomRepo.save(room);
 
-        // ✅ Prepare DTO for response
-        RoomManagementDTO response = new RoomManagementDTO();
-        response.setRoomNumber(saved.getRoomNumber());
-        response.setRoomFloor("Floor " + saved.getFloor());
-        response.setReservationStatus(saved.getStatus());
-        response.setRoomType(saved.getRoomType());
-        response.setCapacity(saved.getCapacity());
-        response.setPricePerNight(saved.getPricePerNight());
-        response.setBedType(saved.getBedType());
-        response.setRoomSize(saved.getRoomSize());
-        response.setDescription(saved.getDescription());
+        return convertToDTO(saved);
+    }
 
-        Map<String, Boolean> amenityMap = saved.getAmenities().stream()
-                .collect(Collectors.toMap(AmenityModel::getName, a -> true));
+    public List<RoomManagementDTO> getAllRooms() {
+        List<RoomManagementModel> rooms = roomRepo.findAll();
+        return rooms.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
-        response.setAmenities(amenityMap);
-        response.setImageUrls(saved.getImageUrls());
+    // Add these methods to RoomService class
 
-        return response;
+    public List<RoomManagementDTO> getRoomsByStatus(String status) {
+        List<RoomManagementModel> rooms = roomRepo.findByStatus(status);
+        return rooms.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<RoomManagementDTO> getRoomsByType(String roomType) {
+        List<RoomManagementModel> rooms = roomRepo.findByRoomType(roomType);
+        return rooms.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<RoomManagementDTO> getRoomsByFloor(Integer floor) {
+        List<RoomManagementModel> rooms = roomRepo.findByFloor(floor);
+        return rooms.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteRoomByNumber(String roomNumber) {
+        RoomManagementModel room = roomRepo.findByRoomNumber(roomNumber)
+                .orElseThrow(() -> new RuntimeException("Room not found with number: " + roomNumber));
+        roomRepo.delete(room);
+    }
+
+
+    private RoomManagementDTO convertToDTO(RoomManagementModel room) {
+        RoomManagementDTO dto = new RoomManagementDTO();
+        dto.setRoomNumber(room.getRoomNumber());
+        dto.setRoomFloor("Floor " + room.getFloor());
+        dto.setReservationStatus(room.getStatus());
+        dto.setRoomType(room.getRoomType());
+        dto.setCapacity(room.getCapacity());
+        dto.setPricePerNight(room.getPricePerNight());
+        dto.setBedType(room.getBedType());
+        dto.setRoomSize(room.getRoomSize());
+        dto.setDescription(room.getDescription());
+
+        // Convert amenities to Map<String, Boolean>
+        Map<String, Boolean> amenityMap = new HashMap<>();
+        if (room.getAmenities() != null) {
+            amenityMap = room.getAmenities().stream()
+                    .collect(Collectors.toMap(AmenityModel::getName, a -> true));
+        }
+        dto.setAmenities(amenityMap);
+
+        // Set image URLs
+        dto.setImageUrls(room.getImageUrls() != null ? room.getImageUrls() : new ArrayList<>());
+
+        return dto;
     }
 }

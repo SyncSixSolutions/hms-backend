@@ -1,5 +1,11 @@
 package com.services.services.service;
 
+import com.services.services.dto.vehicle.CreateVehicleDTO;
+import com.services.services.dto.vehicle.RentedVehiclesDTO;
+import com.services.services.dto.vehicle.VehicleAvailabilityDTO;
+import com.services.services.dto.vehicle.VehicleDTO;
+import com.services.services.model.vehicel.*;
+import com.services.services.repo.vehicle.*;
 
 import com.services.services.dto.vehicle.*;
 import com.services.services.model.vehicel.VehicleAvailability;
@@ -17,8 +23,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Transactional
@@ -39,6 +52,19 @@ public class VehicleService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private RentedVehiclesRepo rentedVehiclesRepository;
+
+    // get all owners of the vehicle
+    public List<VehicleOwnersDTO> getAllOwners(){
+        List<VehicleOwners> owners = ownersRepo.findAll();
+
+        return owners.stream()
+                .map(owner -> modelMapper.map(owner, VehicleOwnersDTO.class))
+                .toList();
+
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public String createVehicle(CreateVehicleDTO createVehicleDTO) {
@@ -65,14 +91,17 @@ public class VehicleService {
         // check if the vehicle already exists
         // if this becomes yes then we can edit the vehicle in different way
         // vehicle need to find by vehicleType, and vehicle number and owner info
-        VehicleModel existingVehicle = vehicleRepo.findByVehicleTypeAndVehicleNumberAndOwnerId(
-                vehicle.getVehicleType(),
-                vehicle.getVehicleNumber(),
-                vehicle.getOwnerId()
-        );
+        VehicleModel existingVehicle = vehicleRepo.findByVehicleNumber(vehicle.getVehicleNumber());
+
+//        existingVehicle = vehicleRepo.findByVehicleTypeAndVehicleNumberAndOwnerId(
+//                vehicle.getVehicleType(),
+//                vehicle.getVehicleNumber(),
+//                vehicle.getOwnerId()
+//        );
+
         if (existingVehicle != null) {
             log.info("Vehicle already exists. Try with edit vehicle");
-            throw new RuntimeException("Vehicle already exists with the given ID");
+            throw new RuntimeException("Vehicle already exists with the given Vehicle Number");
         }
 
         // preparing entities for save
@@ -86,9 +115,26 @@ public class VehicleService {
         // add the createdAt field dynamically for the vehicle
         vehicle.setCreatedAt(LocalDateTime.now());
         vehicle = vehicleRepo.save(vehicle);
+        // get the last inserter id for other table's usage
+//        Integer vehicleId = vehicle.getVehicleId();
 
         saveImages(vehicle, imageEntities);
-        saveOwner(vehicleOwners);
+
+        // Is there is the vehicle owner is registered then the entry should not repeat
+        VehicleOwners existingVehicleOwner = ownersRepo.findByNic(createVehicleDTO.getOwner().getNic());
+
+        if (existingVehicleOwner != null) {
+            // Check if names don't match
+            if (!createVehicleDTO.getOwner().getName().equalsIgnoreCase(existingVehicleOwner.getName())) {
+                throw new RuntimeException("NIC exists but name does not match. Please check for the nic and existing vehicle owners");
+            }
+            // Optionally allow reuse of same NIC + correct name
+            System.out.println("NIC and name match. Proceeding...");
+        } else {
+            // No existing NIC – proceed with registration
+            System.out.println("New NIC. Registering...");
+            saveOwner(vehicle ,vehicleOwners);
+        }
         saveAvailability(vehicle, availabilityEntity);
 
         return "Vehicle created successfully";
@@ -101,7 +147,8 @@ public class VehicleService {
         }
     }
 
-    private void saveOwner(VehicleOwners owner) {
+    private void saveOwner(VehicleModel vehicle, VehicleOwners owner) {
+        owner.setVehicleId(vehicle.getVehicleId());
         ownersRepo.save(owner);
     }
 
@@ -136,6 +183,110 @@ public class VehicleService {
                 .toList());
         responseDTO.setOwner(modelMapper.map(owner, VehicleOwnersDTO.class));
         return responseDTO;
+    }
+
+
+    public RentedVehiclesDTO rentVehicle(int userId, int vehicleId, LocalDate startDate, LocalDate endDate) {
+        // Validate dates
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        // Check vehicle existence
+        VehicleModel vehicleOpt = vehicleRepo.findByVehicleId(vehicleId);
+        if (vehicleOpt == null) {
+            throw new IllegalArgumentException("Vehicle not found.");
+        }
+//        VehicleModel vehicle = vehicleOpt.get();
+
+        // Check availability
+        List<RentedVehicles> conflicts = rentedVehiclesRepository
+                .findByVehicleIdAndDateRange(vehicleId, startDate, endDate);
+        if (!conflicts.isEmpty()) {
+            throw new IllegalStateException("Vehicle is not available in the selected date range.");
+        }
+
+        // Calculate price
+        long rentalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+        BigDecimal totalPrice = vehicleOpt.getBasePrice().multiply(BigDecimal.valueOf(rentalDays));
+
+        // Create rental record
+        RentedVehicles rented = new RentedVehicles();
+        rented.setRentalId(ThreadLocalRandom.current().nextInt(100000, 999999)); // or use sequence
+        rented.setUserId(userId);
+        rented.setVehicleId(vehicleId);
+        rented.setStartDate(startDate);
+        rented.setEndDate(endDate);
+        rented.setPrice(totalPrice);
+        rented.setCreatedAt(LocalDateTime.now());
+
+        rentedVehiclesRepository.save(rented);
+
+        return new RentedVehiclesDTO(
+                rented.getRentalId(),
+                rented.getUserId(),
+                rented.getVehicleId(),
+                rented.getStartDate(),
+                rented.getEndDate(),
+                rented.getPrice(),
+                rented.getCreatedAt()
+        );
+    }
+
+//        public String updateVehicle(UpdateVehicleDTO  updateVehicleDTO) {
+//            VehicleModel existingVehicle = vehicleRepo.findByVehicleId(updateVehicleDTO.getVehicle().getVehicleId());
+//
+//            if (existingVehicle == null) {
+//                throw new IllegalArgumentException("Vehicle not found with ID: " + updateVehicleDTO.getVehicle().getVehicleId());
+//            }
+//            else {
+//                existingVehicle.setVehicleType(updateVehicleDTO.getVehicle().getVehicleType());
+//                existingVehicle.setVehicleNumber(updateVehicleDTO.getVehicle().getVehicleNumber());
+//                existingVehicle.setPassengerCount(updateVehicleDTO.getVehicle().getPassengerCount());
+//                existingVehicle.setPricePerKm(updateVehicleDTO.getVehicle().getPricePerKm());
+//                existingVehicle.setBasePrice(updateVehicleDTO.getVehicle().getBasePrice());
+//                existingVehicle.setAvailabilityFrom(updateVehicleDTO.getVehicle().getAvailabilityFrom());
+//                existingVehicle.setAvailabilityTo(updateVehicleDTO.getVehicle().getAvailabilityTo());
+//                existingVehicle.setDescription(updateVehicleDTO.getVehicle().getDescription());
+//            }
+//
+//        }
+
+
+    public List<VehicleResponseDTO> getVehiclesByDateRange(LocalDate startDate, LocalDate endDate) {
+        // first get available vehicles on the date range
+        List<Integer> availableVehicles = availabilityRepo.findAvailableVehicleIdsBetweenDates(startDate, endDate);
+
+        if(availableVehicles.isEmpty()) {return Collections.emptyList();}
+
+        // find what are the rented vehicles in this time frame
+        List<Integer> rentedVehicleIds = rentedVehiclesRepository.findOverlappingRentals(availableVehicles, startDate, endDate);
+
+        // remove already rented vehicles from the list
+        List<Integer> trulyAvailableVehicleIds = availableVehicles.stream()
+                .filter(id -> !rentedVehicleIds.contains(id))
+                .toList();
+
+        List <VehicleResponseDTO> responseDTOs = new ArrayList<>();
+
+        for (Integer id : trulyAvailableVehicleIds) {
+            VehicleModel vehicle = vehicleRepo.findById(id).orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + id));
+            // remove this if want
+            VehicleAvailability availability = availabilityRepo.findByVehicleId(id);
+
+            List<VehicleImages> images = imagesRepo.findByVehicleId(id);
+            VehicleOwners owner = ownersRepo.findByVehicleId(id);
+
+            VehicleResponseDTO vehicleResponseDTO = new VehicleResponseDTO();
+            vehicleResponseDTO.setVehicle(modelMapper.map(vehicle, VehicleDTO.class));
+            vehicleResponseDTO.setAvailability(modelMapper.map(availability, VehicleAvailabilityDTO.class));
+            vehicleResponseDTO.setImages(images.stream()
+                    .map(img -> modelMapper.map(img, VehicleImagesDTO.class)).toList());
+            vehicleResponseDTO.setOwner(modelMapper.map(owner, VehicleOwnersDTO.class));
+
+            responseDTOs.add(vehicleResponseDTO);
+        }
+        return responseDTOs;
     }
 
 
